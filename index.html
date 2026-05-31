@@ -43,6 +43,7 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* Lớp họa tiết quả cây, ngôi sao, mèo con lơ lửng trên nền loang độc lập */
         body::before {
             content: "";
             position: fixed;
@@ -90,6 +91,7 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
+        /* Quiz Card dạng thẻ bài nổi bật */
         .quiz-card {
             background: var(--card-bg);
             border-radius: 24px;
@@ -101,86 +103,68 @@
         }
 
         .question-text {
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 900;
             color: var(--dark);
             margin-bottom: 22px;
             line-height: 1.6;
         }
 
-        .gap-display {
-            display: inline-block;
-            background: #FFF9E6;
-            border: 3px dashed var(--purple);
-            padding: 6px 20px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 800;
-            color: var(--purple);
-            min-width: 200px;
-            text-align: center;
-            margin: 5px;
-            transition: all 0.2s;
-            box-shadow: 0 4px 0 var(--dark);
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
         }
 
-        .gap-display:hover {
-            background: #F0EDF6;
-            transform: scale(1.03);
+        @media(min-width: 600px) {
+            .options-container {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
-        .dropdown-popup-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 2000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(3px);
-        }
-
-        .dropdown-popup-box {
-            background: white;
-            border: 4px solid var(--dark);
-            border-radius: 24px;
-            padding: 25px;
-            max-width: 440px;
-            width: 90%;
-            box-shadow: 0 10px 0 rgba(0,0,0,0.2);
-            text-align: center;
-        }
-
-        .dropdown-popup-title {
-            font-size: 16px;
-            font-weight: 900;
-            color: var(--dark);
-            margin-bottom: 20px;
-        }
-
-        .dropdown-options-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .popup-option-item {
+        .option-button {
             background: #FFFFFF;
             border: 3px solid var(--dark);
-            border-radius: 15px;
-            padding: 15px;
+            border-radius: 18px;
+            padding: 16px 20px;
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 5px 0 var(--dark);
-            transition: all 0.1s;
+            color: var(--dark);
+            box-shadow: 0 6px 0 var(--dark);
+            transition: all 0.1s ease;
             text-align: left;
+            position: relative;
+            top: 0;
         }
 
-        .popup-option-item:hover {
+        .option-button:hover:not(.disabled) {
+            transform: scale(1.025);
             background: #FFF9E6;
-            transform: scale(1.02);
-            border-color: var(--purple);
+        }
+
+        .option-button:active:not(.disabled) {
+            top: 4px;
+            box-shadow: 0 2px 0 var(--dark);
+        }
+
+        .option-button.correct {
+            background-color: var(--correct) !important;
+            color: white !important;
+            box-shadow: 0 6px 0 #00A352 !important;
+            border-color: var(--dark) !important;
+        }
+
+        .option-button.wrong {
+            background-color: var(--wrong) !important;
+            color: white !important;
+            box-shadow: 0 6px 0 #CC3240 !important;
+            border-color: var(--dark) !important;
+        }
+
+        .option-button.disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
         }
 
         .explanation-container {
@@ -319,18 +303,11 @@
     </div>
 
     <div class="main-container">
-        <h1 class="section-title">🚀 WORD FORMATION MASTERY CHALLENGE 🎯</h1>
+        <h1 class="section-title">🚀 WORD FORMATION ADVANCED TEST 🎯</h1>
         <div id="quiz-area-container"></div>
 
         <div class="submit-bar">
             <button class="big-submit-btn" onclick="submitExam()">NỘP BÀI THI 🎉</button>
-        </div>
-    </div>
-
-    <div class="dropdown-popup-overlay" id="dropdown-popup">
-        <div class="dropdown-popup-box">
-            <div class="dropdown-popup-title">Hãy chọn từ loại chính xác nhất:</div>
-            <div class="dropdown-options-list" id="dropdown-options-list"></div>
         </div>
     </div>
 
@@ -371,278 +348,263 @@
                     gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
                     osc.start(); osc.stop(audioContext.currentTime + 0.4);
                 }
-            } catch (e) { console.log("Audio failure"); }
+            } catch (e) { console.log("Audio contextual issue"); }
         }
 
         const questionsData = [
             {
                 id: 1,
-                textBefore: "The professor is one of the most ",
-                textAfter: " economists of our time, having written over twenty books on market trends. (INFLUENCE)",
-                pool: ["influential", "influencing", "influence", "influenced"],
-                correct: "influential",
+                q: "The heavy rain caused a __________ flow of water down the mountain, flooding the valley below.",
+                options: ["continual", "continuation", "continuous", "continuity"],
+                correct: "continuous",
                 explain: {
-                    trans: "Vị giáo sư này là một trong những nhà kinh tế học có sức ảnh hưởng lớn nhất trong thời đại của chúng ta, ông đã viết hơn hai mươi cuốn sách về xu hướng thị trường.",
+                    trans: "Trận mưa lớn đã tạo ra một dòng nước chảy liên tục không ngắt quãng từ trên núi xuống, làm ngập lụt thung lũng bên dưới.",
                     opts: [
-                        "A. influential (adj): có sức ảnh hưởng sâu rộng, có uy tín lớn.",
-                        "B. influencing (V-ing): hành động đang gây tác động.",
-                        "C. influence (v/n): sự ảnh hưởng / gây ảnh hưởng.",
-                        "D. influenced (V-ed): bị ảnh hưởng."
+                        "A. continual (adj): liên miên, lặp đi lặp lại nhiều lần có ngắt quãng ngắt đoạn.",
+                        "B. continuation (n): sự tiếp tục, phần tiếp nối.",
+                        "C. continuous (adj): liên tục, liên hàm kéo dài không hề bị đứt đoạn hay ngắt quãng về cả thời gian lẫn không gian.",
+                        "D. continuity (n): tính liên tục."
                     ],
-                    why: "Vị trí cần điền đứng trước danh từ chỉ người 'economists' (nhà kinh tế học) và đứng sau trạng từ chỉ mức độ 'most' nên bắt buộc phải điền một tính từ bổ nghĩa: 'influential'.",
-                    wrong: "Danh từ và động từ ở các phương án B, C, D đều vi phạm quy tắc sắp xếp từ loại bổ ngữ trước danh từ chính."
+                    why: "Vị trí trước danh từ 'flow' (dòng chảy) cần một tính từ bổ nghĩa. Xét về tính chất vật lý của dòng nước chảy xiết từ trên núi xuống gây ngập lụt, nó mang đặc tính liên tục kéo dài không đứt quãng, do đó tính từ 'continuous' là lựa chọn chuẩn xác nhất.",
+                    wrong: "A sai vì mang ý nghĩa lặp đi lặp lại có khoảng ngừng; B và D sai từ loại ngữ pháp."
                 }
             },
             {
                 id: 2,
-                textBefore: "The government is investing billions of dollars in the ",
-                textAfter: " of the country’s aging railway system. (MODERN)",
-                pool: ["modernisation", "modernise", "modern", "modernly"],
-                correct: "modernisation",
+                q: "As the main highway was closed due to a landslide, drivers had to look for alternative routes.",
+                options: ["alternatives", "alternations", "alternates", "alternative"],
+                correct: "alternative",
                 explain: {
-                    trans: "Chính phủ đang đầu tư hàng tỷ đô la vào việc hiện đại hóa hệ thống đường sắt đang xuống cấp của đất nước.",
+                    trans: "Vì đường cao tốc chính bị đóng cửa do sạt lở đất, các tài xế đã phải tìm kiếm các lộ trình thay thế khác.",
                     opts: [
-                        "A. modernisation (n): sự hiện đại hóa, quá trình đổi mới công nghệ.",
-                        "B. modernise (v): hiện đại hóa.",
-                        "C. modern (adj): hiện đại.",
-                        "D. modernly (adv): một cách hiện đại."
+                        "A. alternatives (n): các sự lựa chọn thay thế khác.",
+                        "B. alternations (n): sự xen kẽ, sự luân phiên.",
+                        "C. alternates (v/n): luân phiên / người thay thế.",
+                        "D. alternative (adj): có tính chất thay thế, phương án khác."
                     ],
-                    why: "Vị trí đứng sau mạo từ cấu trúc 'the' và trước giới từ 'of' bắt buộc phải là một danh từ đóng vai trò trung tâm cụm từ, do đó chọn 'modernisation'.",
-                    wrong: "B là động từ, C là tính từ, D là trạng từ nên hoàn toàn sai quy tắc cấu trúc ngữ pháp sau mạo từ 'the'."
+                    why: "Đứng trước danh từ chính số nhiều 'routes' (các tuyến đường/lộ trình) cần một tính từ bổ nghĩa cho nó tạo thành cụm danh từ ghép. Tính từ 'alternative' mang ý nghĩa là lộ trình dự phòng, thay thế hoàn toàn thích hợp.",
+                    wrong: "A, B, C đều đóng vai trò danh từ hoặc động từ nên vi phạm quy tắc cú pháp ngữ pháp đứng trước danh từ chính."
                 }
             },
             {
                 id: 3,
-                textBefore: "After the accident, he was left completely ",
-                textAfter: " of walking without assistance. (CAPABLE)",
-                pool: ["incapable", "capable", "capability", "capably"],
-                correct: "incapable",
+                q: "The city plans to phase out diesel trains and replace them entirely with an __________ network by 2030.",
+                options: ["electrician", "electrified", "electricity", "electrifying"],
+                correct: "electrified",
                 explain: {
-                    trans: "Sau vụ tai nạn, anh ấy bị bỏ lại trong tình trạng hoàn toàn không có khả năng tự đi lại nếu không có sự trợ giúp.",
+                    trans: "Thành phố có kế hoạch loại bỏ dần các đoàn tàu chạy bằng dầu diesel và thay thế chúng hoàn toàn bằng một mạng lưới đường sắt đã được điện khí hóa vào năm 2030.",
                     opts: [
-                        "A. incapable (adj): không có khả năng, bất lực (đi với giới từ 'of').",
-                        "B. capable (adj): có năng lực, có khả năng.",
-                        "C. capability (n): năng lực.",
-                        "D. capably (adv): một cách có năng lực."
+                        "A. electrician (n): thợ điện.",
+                        "B. electrified (adj/V-ed): đã được điện khí hóa, được cung cấp điện.",
+                        "C. electricity (n): dòng điện, điện năng.",
+                        "D. electrifying (adj): cực kỳ lý thú, gây sốc hứng khởi."
                     ],
-                    why: "Đứng sau động từ nối trạng thái 'was left' và trạng từ 'completely' cần một tính từ. Cấu trúc đi kèm giới từ 'of' phía sau quy định cụm cố định: 'incapable of doing something' (không thể làm gì). Ngữ cảnh tai nạn gây hậu quả tiêu cực nên phải dùng tiền tố phủ định 'in-'.",
-                    wrong: "B trái ngược hoàn toàn ngữ nghĩa thực tế tai nạn; C và D sai từ loại ngữ pháp."
+                    why: "Vị trí đứng trước danh từ 'network' (mạng lưới) và đứng sau mạo từ 'an' cần một tính từ/phân từ bổ nghĩa. Xét về ngữ cảnh thay thế tàu chạy dầu diesel, mạng lưới đường tàu phải được nâng cấp lắp đặt hệ thống điện, tức là 'electrified network'.",
+                    wrong: "A và C sai loại từ; D mang ý nghĩa ẩn dụ chỉ một sự kiện hoặc màn trình diễn bùng nổ, không đi với mạng lưới kỹ thuật đường sắt."
                 }
             },
             {
                 id: 4,
-                textBefore: "Once the contract is signed, the terms are ",
-                textAfter: " and cannot be negotiated under any circumstances. (ALTER)",
-                pool: ["unalterable", "alteration", "alterable", "altered"],
-                correct: "unalterable",
+                q: "Freelance designers enjoy __________ working hours, allowing them to balance work and family life easily.",
+                options: ["flexibility", "inflexibility", "inflexible", "flexible"],
+                correct: "flexible",
                 explain: {
-                    trans: "Một khi hợp đồng đã được ký kết, các điều khoản là bất di bất dịch và không thể thương lượng lại trong bất kỳ hoàn cảnh nào.",
+                    trans: "Các nhà thiết kế tự do được tận hưởng giờ làm việc linh hoạt, điều này cho phép họ cân bằng giữa công việc và cuộc sống gia đình một cách dễ dàng.",
                     opts: [
-                        "A. unalterable (adj): không thể sửa đổi, không thể thay đổi, bất di bất dịch.",
-                        "B. alteration (n): sự sửa đổi, sự thay đổi nhỏ.",
-                        "C. alterable (adj): có thể thay đổi sửa đổi.",
-                        "D. altered (V-ed): đã bị thay đổi."
+                        "A. flexibility (n): tính linh hoạt.",
+                        "B. inflexibility (n): tính cứng nhắc.",
+                        "C. inflexible (adj): cứng nhắc, không linh hoạt.",
+                        "D. flexible (adj): linh hoạt, cơ động."
                     ],
-                    why: "Đứng sau động từ nối 'are' cần tính từ. Căn cứ vào vế sau 'cannot be negotiated under any circumstances' (không thể thương lượng trong bất kỳ hoàn cảnh nào) chứng tỏ tính chất các điều khoản này là cố định, dùng tính từ phủ định 'unalterable'.",
-                    wrong: "C trái ngược nghĩa vế sau; B sai loại từ; D làm câu tối nghĩa lỗi phối hợp trạng thái."
+                    why: "Đứng trước cụm danh từ tân ngữ 'working hours' (giờ làm việc) cần một tính từ bổ nghĩa. Ý nghĩa câu mang tính chất tích cực giúp cân bằng cuộc sống (*balance work and family*) nên ta chọn tính từ chỉ sự linh động 'flexible'.",
+                    wrong: "A và B sai từ loại; C mang nghĩa tiêu cực cứng nhắc, mâu thuẫn hoàn toàn với lợi ích của công việc tự do đề bài mô tả."
                 }
             },
             {
                 id: 5,
-                textBefore: "Living in different countries during her childhood gave her a high degree of ",
-                textAfter: " to new environments. (ADAPT)",
-                pool: ["adaptability", "adapt", "adaptable", "adaptation"],
-                correct: "adaptability",
+                q: "The factory is looking to find a suitable __________ for the damaged machinery before production halts.",
+                options: ["placing", "placement", "replacement", "replaceable"],
+                correct: "replacement",
                 explain: {
-                    trans: "Việc sống ở nhiều quốc gia khác nhau trong suốt thời thơ ấu đã mang lại cho cô ấy một khả năng thích nghi cao đối với các môi trường mới.",
+                    trans: "Nhà máy đang tìm kiếm một sự thay thế thích hợp cho bộ phận máy móc bị hư hỏng trước khi quá trình sản xuất bị đình trệ.",
                     opts: [
-                        "A. adaptability (n): khả năng thích nghi, năng lực thích ứng với hoàn cảnh.",
-                        "B. adapt (v): thích nghi.",
-                        "C. adaptable (adj): có thể thích nghi tốt.",
-                        "D. adaptation (n): sự thích nghi (thiên về quá trình biến đổi sinh học hoặc tác phẩm chuyển thể)."
+                        "A. placing (n/V-ing): hành động đặt để.",
+                        "B. placement (n): sự sắp xếp việc làm, chỗ thực tập.",
+                        "C. replacement (n): sự thay thế, vật thay thế hoặc linh kiện thay thế.",
+                        "D. replaceable (adj): có thể thay thế được."
                     ],
-                    why: "Đứng sau cấu trúc cụm từ đo lường 'a high degree of' (mức độ cao của cái gì) bắt buộc phải điền một danh từ trừu tượng chỉ tố chất năng lực: 'adaptability'.",
-                    wrong: "B và C sai từ loại; D chỉ sự biến đổi hình thái sinh học chứ không chỉ tố chất, năng lực linh hoạt thích nghi hoàn cảnh sống của con người."
+                    why: "Vị trí đứng sau mạo từ 'a' và tính từ 'suitable' chắc chắn cần một danh từ cốt lõi. Trong ngữ cảnh máy móc bị hỏng hóc nặng (*damaged machinery*), việc cần làm là tìm linh kiện hoặc bộ máy khác thế chỗ vào, tức là chọn danh từ 'replacement'.",
+                    wrong: "A và B sai ngữ nghĩa bối cảnh kỹ thuật nhà máy; D sai từ loại ngữ pháp."
                 }
             },
             {
                 id: 6,
-                textBefore: "The company appointed a new deputy director to ensure the ",
-                textAfter: " of leadership during the transition period. (CONTINUE)",
-                pool: ["continuity", "continue", "continuous", "continually"],
-                correct: "continuity",
+                q: "After losing everything in the fire, the family moved to a new town to forget the past and start __________.",
+                options: ["anew", "newly", "newness", "renewal"],
+                correct: "anew",
                 explain: {
-                    trans: "Công ty đã bổ nhiệm một phó giám đốc mới để đảm bảo tính liên tục của bộ máy lãnh đạo trong giai đoạn chuyển giao.",
+                    trans: "Sau khi mất đi tất cả mọi thứ trong vụ hỏa hoạn, gia đình ấy đã chuyển đến một thị trấn mới để quên đi quá khứ và bắt đầu lại từ đầu.",
                     opts: [
-                        "A. continuity (n): tính liên tục, sự kế thừa liên miên không ngắt quãng.",
-                        "B. modernisation (n): sự hiện đại hóa, quá trình đổi mới công nghệ.",
-                        "C. continuous (adj): liên tục.",
-                        "D. continually (adv): một cách liên tục lặp đi lặp lại."
+                        "A. anew (adv): bắt đầu lại từ đầu, theo một cách hoàn toàn mới (thường đi với động từ start).",
+                        "B. newly (adv): gần đây, vừa mới diễn ra.",
+                        "C. newness (n): tính chất mới mẻ.",
+                        "D. renewal (n): sự gia hạn, sự đổi mới thủ tục văn bản."
                     ],
-                    why: "Đứng sau mạo từ 'the' và đứng trước cấu trúc giới từ 'of leadership' bắt buộc phải là một danh từ giữ vai trò cốt lõi cụm từ, do đó chọn 'continuity'.",
-                    wrong: "Các phương án B, C, D đều sai phạm quy tắc từ loại đứng sau mạo từ chỉ định 'the'."
+                    why: "Cụm cấu trúc kết hợp từ vựng cố định kinh điển trong tiếng Anh học thuật: 'start anew' mang ý nghĩa biểu thị sự rũ bỏ quá khứ đau buồn để xây dựng, khởi đầu lại cuộc sống hoàn toàn mới từ con số không.",
+                    wrong: "Học sinh rất dễ bị đánh lừa chọn trạng từ 'newly' theo thói quen cấu trúc thông thường, tuy nhiên 'newly' chỉ trạng thái vừa mới hoàn thành, không đi với động từ 'start' tạo nghĩa khởi đầu lại như 'anew'."
                 }
             },
             {
                 id: 7,
-                textBefore: "Scientists believe that the development of this species was a long ",
-                textAfter: " process that took millions of years. (EVOLVE)",
-                pool: ["evolutionary", "evolution", "evolve", "evolving"],
-                correct: "evolutionary",
+                q: "These two computer cables look different, but their functions are actually completely __________.",
+                options: ["exchange", "interchangeable", "changeover", "unchanging"],
+                correct: "interchangeable",
                 explain: {
-                    trans: "Các nhà khoa học tin rằng sự phát triển của loài này là một quá trình tiến hóa lâu dài mất hàng triệu năm.",
+                    trans: "Hai sợi cáp máy tính này trông có vẻ khác nhau, nhưng các chức năng của chúng trên thực tế lại hoàn toàn có thể hoán đổi cho nhau.",
                     opts: [
-                        "A. evolutionary (adj): thuộc về tiến hóa, mang tính chất tiến hóa dần dần.",
-                        "B. evolution (n): sự tiến hóa.",
-                        "C. evolve (v): tiến hóa.",
-                        "D. evolving (V-ing): đang tiến hóa."
+                        "A. exchange (v/n): trao đổi.",
+                        "B. interchangeable (adj): có thể thay thế, hoán đổi vị trí/công năng qua lại cho nhau mà không gây ảnh hưởng.",
+                        "C. changeover (n): sự chuyển đổi hệ thống.",
+                        "D. unchanging (adj): không thay đổi."
                     ],
-                    why: "Đứng trước danh từ chính 'process' (quá trình) và đứng sau tính từ 'long' cần một tính từ đồng dạng để tạo thành cấu trúc liệt kê tính chất: 'evolutionary process'.",
-                    wrong: "Danh từ evolution không đứng làm bổ ngữ bổ nghĩa trực tiếp cho danh từ process trong thuật ngữ khoa học ghép đôi này; C và D sai loại từ."
+                    why: "Vị trí đứng sau hệ từ nối 'are' và trạng từ chỉ mức độ tuyệt đối 'completely' bắt buộc phải điền một tính từ. Hai chiếc cáp công nghệ tuy ngoại hình khác biệt nhưng cắm thay thế cho nhau được, áp dụng tính từ 'interchangeable'.",
+                    wrong: "A và C sai từ loại; D mang nghĩa tĩnh giữ nguyên không làm bật lên tính chất công năng tương thích lẫn nhau của hai thiết bị điện tử."
                 }
             },
             {
                 id: 8,
-                textBefore: "Running a marathon in such extreme weather conditions is a true test of physical ",
-                textAfter: ". (ENDURE)",
-                pool: ["endurance", "endure", "endurable", "enduring"],
-                correct: "endurance",
+                q: "I couldn't get a single wink of sleep last night because of the __________ buzzing sound of the air conditioner.",
+                options: ["continual", "continuation", "continuous", "continuously"],
+                correct: "continual",
                 explain: {
-                    trans: "Chạy marathon trong điều kiện thời tiết khắc nghiệt như vậy là một bài kiểm tra thực sự đối với sức chịu đựng thể chất.",
+                    trans: "Đêm qua tôi không thể chợp mắt lấy một phút nào vì tiếng kêu vo ve lặp đi lặp lại liên miên của chiếc máy điều hòa.",
                     opts: [
-                        "A. endurance (n): sức chịu đựng, khả năng cam chịu bền bỉ.",
-                        "B. endure (v): chịu đựng.",
-                        "C. endurable (adj): có thể chịu đựng được.",
-                        "D. enduring (adj): lâu dài, trường tồn."
+                        "A. continual (adj): liên miên, lặp đi lặp lại gây khó chịu (có khoảng ngắt quãng nhỏ bộc phát).",
+                        "B. continuation (n): sự tiếp nối.",
+                        "C. continuous (adj): liên tục không ngừng một giây nào (về mặt vật lý dòng chảy/thời gian).",
+                        "D. continuously (adv): một cách liên tục."
                     ],
-                    why: "Đứng sau tính từ 'physical' (thuộc về thể chất) cần một danh từ để tạo thành cụm danh từ ghép hoàn chỉnh: 'physical endurance' (sức chịu đựng của thể chất).",
-                    wrong: "B, C, D đều sai từ loại ngữ pháp bắt buộc theo sau tính từ bổ nghĩa."
+                    why: "Vị trí trước cụm danh từ 'buzzing sound' cần tính từ bổ nghĩa. Tiếng máy móc hỏng hóc kêu vo ve lặp đi lặp lại từng hồi gây phiền toái, bực mình cho người ngủ thường đi với tính từ đặc tả 'continual'.",
+                    wrong: "B và d sai từ loại; C thiên về tính liên tục tuyệt đối không ngắt quãng của chuỗi thời gian hoặc đường thẳng địa lý."
                 }
             },
             {
                 id: 9,
-                textBefore: "It took me nearly a week to ",
-                textAfter: " to the local time zone after flying from London to Tokyo. (ADJUST)",
-                pool: ["adjust", "adjustment", "adjustable", "adjusted"],
-                correct: "adjust",
+                q: "The invention of the microchip was a __________ breakthrough that paved the way for modern computing.",
+                options: ["revolutionary", "revolutionise", "revolutionist", "revolting"],
+                correct: "revolutionary",
                 explain: {
-                    trans: "Tôi đã mất gần một tuần để điều chỉnh thích nghi với múi giờ địa phương sau chuyến bay từ Luân Đôn đến Tokyo.",
+                    trans: "Sự phát minh ra vi mạch là một bước đột phá mang tính cách mạng, mở đường cho nền tin học hiện đại.",
                     opts: [
-                        "A. adjust (v): điều chỉnh, thích nghi (đi với giới từ 'to').",
-                        "B. adjustment (n): sự điều chỉnh.",
-                        "C. adjustable (adj): có thể căn chỉnh được.",
-                        "D. adjusted (V-ed): đã được căn chỉnh."
+                        "A. revolutionary (adj): mang tính cách mạng, làm thay đổi hoàn toàn lịch sử cục diện.",
+                        "B. revolutionise (v): cách mạng hóa.",
+                        "C. revolutionist (n): nhà cách mạng.",
+                        "D. revolting (adj): kinh tởm, ghê tởm."
                     ],
-                    why: "Áp dụng cấu trúc chỉ thời gian tiêu tốn: 'It takes/took someone + thời gian + to-V (động từ nguyên mẫu)'. Do đó tại chỗ trống ta chọn động từ nguyên thể 'adjust'. Cụm 'adjust to something' nghĩa là thích nghi với cái gì.",
-                    wrong: "B, C, D đều sai quy tắc chia dạng động từ đứng sau cấu trúc chỉ mốc tiêu tốn thời gian 'to'."
+                    why: "Đứng trước danh từ 'breakthrough' (bước đột phá) cần điền một tính từ bổ nghĩa. Phát minh vi mạch đổi mới thời đại là bước tiến mang tính chất cách mạng vĩ đại, tương thích tính từ 'revolutionary'.",
+                    wrong: "B và C sai từ loại; D mang ý nghĩa xúc phạm, tồi tệ hôi thối, hoàn toàn lạc lõng nghĩa bối cảnh."
                 }
             },
             {
                 id: 10,
-                textBefore: "This antique watch belongs to my grandmother and is completely ",
-                textAfter: " to our family. (PLACE)",
-                pool: ["irreplaceable", "replaceable", "replacement", "place"],
-                correct: "irreplaceable",
+                q: "You might need to make a slight __________ to the camera lens focus to get a sharper image in low light.",
+                options: ["adjustable", "adjustment", "readjust", "adjusted"],
+                correct: "adjustment",
                 explain: {
-                    trans: "Chiếc đồng hồ cổ này thuộc về bà nội của tôi và nó hoàn toàn không thể thay thế được đối với gia đình chúng tôi.",
+                    trans: "Bạn có thể cần phải thực hiện một sự điều chỉnh nhỏ đối với tiêu cự ống kính máy ảnh để có được hình ảnh sắc nét hơn trong điều kiện thiếu sáng.",
                     opts: [
-                        "A. irreplaceable (adj): vô giá, không một thứ gì có thể thay thế nổi.",
-                        "B. replaceable (adj): có thể thay thế được.",
-                        "C. replacement (n): sự thay thế / vật thay thế.",
-                        "D. place (v/n): đặt để / địa điểm."
+                        "A. adjustable (adj): có thể căn chỉnh được.",
+                        "B. adjustment (n): sự điều chỉnh, hành vi tinh chỉnh thông số.",
+                        "C. readjust (v): tái điều chỉnh lại.",
+                        "D. adjusted (V-ed): đã được chỉnh."
                     ],
-                    why: "Đứng sau động từ nối hệ từ 'is' và trạng từ 'completely' cần một tính từ. Chiếc đồng hồ cổ là kỷ vật gia đình quý giá thừa kế từ bà nên giá trị tinh thần của nó là độc bản, áp dụng tính từ mang tiền tố phủ định 'irreplaceable'.",
-                    wrong: "B trái ngược hoàn toàn ý nghĩa trân trọng kỷ vật; C và D sai loại từ ngữ pháp."
+                    why: "Cấu trúc cụm động từ đi liền nhau (collocation) với động từ 'make': 'make an adjustment to something' có nghĩa là tiến hành thực hiện một sự điều chỉnh thông số cho phù hợp hoàn cảnh.",
+                    wrong: "Các phương án tính từ và động từ A, C, D đều vi phạm quy tắc danh từ đứng sau tính từ bổ nghĩa 'slight'."
                 }
             },
             {
                 id: 11,
-                textBefore: "Stop throwing tantrums like that! You are twenty years old, yet your behavior is incredibly ",
-                textAfter: ". (MATURE)",
-                pool: ["immature", "mature", "maturity", "maturely"],
-                correct: "immature",
+                q: "Nutritionists often warn against consuming too much __________ food as it contains high levels of sodium.",
+                options: ["processor", "processing", "processed", "process"],
+                correct: "processed",
                 explain: {
-                    trans: "Hãy thôi ngay việc hờn dỗi trẻ con như thế đi! Bạn đã hai mươi tuổi rồi, vậy mà hành vi của bạn lại cực kỳ trẻ con/chưa trưởng thành.",
+                    trans: "Các chuyên gia dinh dưỡng thường cảnh báo chống lại việc tiêu thụ quá nhiều thực phẩm đã qua chế biến sẵn vì nó chứa hàm lượng natri cao.",
                     opts: [
-                        "A. immature (adj): non nớt, chưa trưởng thành, tính tình trẻ con hờn dỗi.",
-                        "B. mature (adj): trưởng thành, chín chắn.",
-                        "C. maturity (n): sự trưởng thành.",
-                        "D. maturely (adv): một cách chín chắn."
+                        "A. processor (n): bộ vi xử lý máy tính / máy chế biến đồ ăn.",
+                        "B. processing (n/V-ing): sự chế biến, quy trình xử lý dữ liệu.",
+                        "C. processed (adj/V-ed): đã qua chế biến, được đóng hộp xử lý công nghiệp.",
+                        "D. process (n/v): quy trình / xử lý."
                     ],
-                    why: "Đứng sau trạng từ chỉ mức độ cực đoan 'incredibly' cần một tính từ. Ngữ cảnh phê phán hành vi hờn dỗi vô cớ dù đã 20 tuổi chỉ ra tính cách này mang nghĩa tiêu cực trẻ con, chọn 'immature'.",
-                    wrong: "B mang nghĩa chín chắn tích cực, mâu thuẫn trực tiếp với câu lệnh phê bình ở đầu; C và D sai loại từ."
+                    why: "Đứng trước danh từ 'food' (thực phẩm) cần tính từ/phân từ bổ nghĩa tạo danh từ ghép. Khái niệm đồ ăn đóng hộp, được làm sẵn qua nhà máy công nghiệp trong tiếng Anh luôn dùng cấu trúc 'processed food'.",
+                    wrong: "A là danh từ chỉ công cụ máy móc thiết bị phần cứng; B và D sai cấu trúc kết hợp từ vựng."
                 }
             },
             {
                 id: 12,
-                textBefore: "Because the keynote speaker missed his flight, the organizers had to ",
-                textAfter: " the entire afternoon schedule. (ARRANGE)",
-                pool: ["rearrange", "arrangement", "arrange", "arranging"],
-                correct: "rearrange",
+                q: "The country aims to generate 80% of its electricity from __________ sources like wind and solar power.",
+                options: ["renewable", "renewal", "renewed", "newly"],
+                correct: "renewable",
                 explain: {
-                    trans: "Bởi vì diễn giả chính đã bị lỡ chuyến bay, ban tổ chức đã phải sắp xếp lại toàn bộ lịch trình làm việc của buổi chiều.",
+                    trans: "Quốc gia này đặt mục tiêu sản xuất 80% lượng điện năng từ các nguồn năng lượng tái tạo như năng lượng gió và năng lượng mặt trời.",
                     opts: [
-                        "A. rearrange (v): sắp xếp lại, bố trí lại lịch trình cấu trúc cũ sang lịch mới.",
-                        "B. arrangement (n): sự sắp xếp.",
-                        "C. arrange (v): sắp xếp, thu xếp.",
-                        "D. arranging (V-ing): đang sắp xếp."
+                        "A. renewable (adj): có khả năng tự tái tạo, năng lượng vô hạn (renewable sources).",
+                        "B. renewal (n): sự gia hạn giấy tờ.",
+                        "C. renewed (V-ed): được làm mới, hồi sinh cảm xúc.",
+                        "D. newly (adv): vừa mới."
                     ],
-                    why: "Đứng sau trợ động từ khuyết thiếu bắt buộc 'had to' cần một động từ nguyên mẫu. Lý do sự cố diễn giả lỡ chuyến bay buộc ban tổ chức phải thay đổi kế hoạch cũ để lập ra lịch mới, hành động mang tiền tố lặp lại này là 'rearrange'.",
-                    wrong: "C chỉ mang nghĩa xếp lịch ban đầu chứ chưa làm bật lên phản ứng xử lý sự cố hủy lịch cũ làm lại lịch mới; B và D sai dạng thức từ loại."
+                    why: "Thuật ngữ môi trường học thuật cố định đi với danh từ 'sources' đứng sau các ví dụ điện gió, điện mặt trời luôn là cụm danh từ ghép 'renewable sources / renewable energy' (năng lượng tái tạo).",
+                    wrong: "B sai từ loại; C và D sai lệch hoàn toàn bản chất công nghệ kỹ thuật năng lượng."
                 }
             },
             {
                 id: 13,
-                textBefore: "It was only through his sheer ",
-                textAfter: " that he managed to finish the research despite having no funding. (PERSIST)",
-                pool: ["persistence", "persist", "persistent", "persistently"],
-                correct: "persistence",
+                q: "The company policy is so __________ that managers are not allowed to make any exceptions, even in emergencies.",
+                options: ["flexible", "flexibility", "inflexibility", "inflexible"],
+                correct: "inflexible",
                 explain: {
-                    trans: "Chích nhờ vào sự kiên trì bền bỉ đến cùng của mình mà anh ấy đã xoay sở hoàn thành nghiên cứu bất chấp việc không có tài trợ.",
+                    trans: "Chính sách của công ty cứng nhắc đến mức các quản lý không được phép đưa ra bất kỳ ngoại lệ nào, ngay cả trong những trường hợp khẩn cấp.",
                     opts: [
-                        "A. persistence (n): sự kiên trì bền bỉ, tính dai dẳng quyết tâm.",
-                        "B. persist (v): kiên trì.",
-                        "C. persistent (adj): kiên trì, dai dẳng.",
-                        "D. persistently (adv): một cách kiên trì."
+                        "A. flexible (adj): linh hoạt.",
+                        "B. flexibility (n): tính linh động.",
+                        "C. inflexibility (n): sự cứng nhắc.",
+                        "D. inflexible (adj): cứng nhắc, bất di bất dịch, không thể lay chuyển."
                     ],
-                    why: "Đứng sau tính từ nhấn mạnh 'sheer' và tính từ sở hữu 'his' bắt buộc vị trí này phải điền một danh từ trừu tượng chỉ phẩm chất con người: 'persistence'.",
-                    wrong: "Các phương án B, C, D đều vi phạm quy tắc từ loại đứng sau tính từ sở hữu 'his'."
+                    why: "Cấu trúc nhấn mạnh kết quả: 'so + adj + that'. Cần điền một tính từ sau chữ 'so'. Thông tin vế sau chỉ ra người quản lý tuyệt đối không được phép châm chước linh hoạt giải quyết dù khẩn cấp (*not allowed to make exceptions*), chứng tỏ nội quy này vô cùng cứng nhắc 'inflexible'.",
+                    wrong: "A ngược nghĩa hoàn toàn bối cảnh câu; B và C sai từ loại ngữ pháp."
                 }
             },
             {
                 id: 14,
-                textBefore: "We bought a ",
-                textAfter: " sofa so that our guests would have a comfortable place to sleep when staying overnight. (CONVERT)",
-                pool: ["convertible", "convert", "conversion", "converted"],
-                correct: "convertible",
+                q: "He handles criticism with great __________, never getting angry and always looking for ways to improve.",
+                options: ["mature", "maturity", "immature", "maturation"],
+                correct: "maturity",
                 explain: {
-                    trans: "Chúng tôi đã mua một chiếc ghế sofa có thể chuyển đổi công năng để khách của chúng tôi có một nơi ngủ thoải mái khi ở lại qua đêm.",
+                    trans: "Anh ấy đối mặt xử lý những lời chỉ trích với một sự trưởng thành/chín chắn tuyệt vời, không bao giờ nổi giận và luôn tìm cách để tiến bộ.",
                     opts: [
-                        "A. convertible (adj): có thể biến đổi hình thái, có thể chuyển đổi công năng sử dụng.",
-                        "B. convert (v): chuyển đổi.",
-                        "C. conversion (n): sự chuyển đổi hình thức.",
-                        "D. converted (V-ed): đã được chuyển đổi."
+                        "A. mature (adj): chín chắn, trưởng thành.",
+                        "B. maturity (n): sự trưởng thành, sự chín chắn trong tư duy.",
+                        "C. immature (adj): non nớt, trẻ con.",
+                        "D. maturation (n): quá trình mưng mủ / quá trình phát triển sinh học cơ thể."
                     ],
-                    why: "Vị trí đứng trước danh từ 'sofa' và sau mạo từ 'a' cần một tính từ bổ nghĩa cho vật thể. Ghế sofa có thể biến đổi thành giường ngủ khi có khách qua đêm phù hợp với tính từ chỉ khả năng mang đuôi '-ible': 'convertible sofa'.",
-                    wrong: "B và C sai từ loại; D mang nghĩa vật đã bị cải tạo tĩnh, không chỉ đặc tính thiết kế cơ động của chiếc ghế đa năng này."
+                    why: "Đứng sau tính từ 'great' cần một danh từ trừu tượng đóng vai trò tân ngữ cho giới từ 'with'. Phẩm chất điềm tĩnh tiếp thu chỉ trích không nổi giận (*never getting angry*) thể hiện sự chín chắn tư duy, áp dụng danh từ 'maturity'.",
+                    wrong: "A và C sai từ loại; D chỉ sự phát triển thể chất tế bào sinh học, không dùng cho tâm lý hành vi giao tiếp xã hội."
                 }
             },
             {
                 id: 15,
-                textBefore: "The rubbish had been left out in the sun for days, emitting a ",
-                textAfter: " smell that drove the neighbors away. (REVOLT)",
-                pool: ["revolting", "revolt", "revolution", "revolted"],
-                correct: "revolting",
+                q: "Many people find comfort in religion because it provides a set of __________ moral truths in a changing world.",
+                options: ["changeless", "exchangeable", "unchangeable", "unchanging"],
+                correct: "unchanging",
                 explain: {
-                    trans: "Rác thải đã bị bỏ ngoài trời nắng suốt nhiều ngày, tỏa ra một mùi kinh tởm kinh dị khiến những người hàng xóm phải bỏ chạy đi nơi khác.",
+                    trans: "Nhiều người tìm thấy sự an ủi trong tôn giáo bởi vì nó cung cấp một hệ thống các chân lý đạo đức bất biến, không bao giờ thay đổi trong một thế giới đầy biến động.",
                     opts: [
-                        "A. revolting (adj): kinh tởm, ghê tởm, gây buồn nôn kinh dị.",
-                        "B. revolt (v/n): nổi loạn / cuộc nổi dậy.",
-                        "C. revolution (n): cuộc cách mạng.",
-                        "D. revolted (V-ed): bị làm cho kinh tởm."
+                        "A. changeless (adj): không thay đổi (thường dùng cho trạng thái tĩnh vô tri).",
+                        "B. exchangeable (adj): có thể trao đổi buôn bán.",
+                        "C. unchangeable (adj): không thể sửa đổi (dùng cho quyết định/luật lệ).",
+                        "D. unchanging (adj): bất biến, luôn giữ nguyên bản chất trường tồn theo thời gian (đi với cụm 'moral truths')."
                     ],
-                    why: "Đứng trước danh từ chỉ sự vật 'smell' (mùi hôi) và đứng sau mạo từ 'a' cần một tính từ mang tính chủ động mô tả tính chất gây ra cảm xúc ghê tởm của sự vật: 'revolting'.",
-                    wrong: "B và C sai nghĩa hoàn toàn; D dùng cho cảm xúc của con người bị tác động (bị ghê tởm) chứ không dùng mô tả đặc tính bản chất của mùi hôi rác thải."
+                    why: "Đứng trước cụm danh từ 'moral truths' (các chân lý đạo đức) cần một tính từ bổ nghĩa. Đối lập với một thế giới đầy sự xoay vần biến động không ngừng (*a changing world*) là những giá trị đạo đức có tính chất bất biến trường tồn, thuật ngữ triết học/ngôn ngữ học luôn là 'unchanging moral truths'.",
+                    wrong: "A và C ít dùng và lệch collocations học thuật khi đi kèm bổ trợ cho chân lý đạo đức vĩ mô; B sai nghĩa."
                 }
             }
         ];
@@ -669,12 +631,18 @@
                 card.className = 'quiz-card';
                 card.id = `wf-card-${index}`;
 
+                // Tráo trộn ngẫu nhiên danh sách đáp án phái sinh từ loại
+                let shuffledPool = shuffleOptionsArray(item.options);
+
+                let buttonsMarkup = shuffledPool.map(opt => `
+                    <button class="option-button" onclick="submitSelectedWord(${index}, '${opt}', this)">
+                        ${opt}
+                    </button>
+                `).join('');
+
                 card.innerHTML = `
-                    <div class="question-text">
-                        Câu hỏi ${item.id}: ${item.textBefore}
-                        <span class="gap-display" id="gap-wf-${index}" onclick="openWordFormationDropdown(${index})">........... Click để chọn từ ...........</span>
-                        ${item.textAfter}
-                    </div>
+                    <div class="question-text">Câu hỏi ${item.id}: ${item.q}</div>
+                    <div class="options-container">${buttonsMarkup}</div>
                     <div class="explanation-container" id="exp-wf-${index}">
                         <div class="exp-title">💡 PHÂN TÍCH CHUYÊN SÂU TỪ MS NGOC HAI FTU:</div>
                         <div class="exp-step"><strong>Bước 1 (Dịch nghĩa toàn câu):</strong> ${item.explain.trans}</div>
@@ -687,46 +655,24 @@
             });
         }
 
-        window.openWordFormationDropdown = function(idx) {
-            if (userAnswersMap[idx] !== undefined) return;
-            
-            const popup = document.getElementById('dropdown-popup');
-            const optionsListContainer = document.getElementById('dropdown-options-list');
-            optionsListContainer.innerHTML = "";
-
-            let shuffledPool = shuffleOptionsArray(questionsData[idx].pool);
-
-            shuffledPool.forEach(optionText => {
-                const optItem = document.createElement('div');
-                optItem.className = "popup-option-item";
-                optItem.text = optionText;
-                optItem.innerText = optionText;
-                optItem.onclick = function() {
-                    submitSelectedWord(idx, optionText);
-                };
-                optionsListContainer.appendChild(optItem);
-            });
-
-            popup.style.display = "flex";
-        };
-
-        function submitSelectedWord(idx, selectedValue) {
-            document.getElementById('dropdown-popup').style.display = "none";
-            
-            const gapLabel = document.getElementById(`gap-wf-${idx}`);
+        function submitSelectedWord(idx, selectedValue, btnElement) {
             const card = document.getElementById(`wf-card-${idx}`);
+            if (card.dataset.done === "true") return;
+            card.dataset.done = "true";
+            
             const explanationPanel = document.getElementById(`exp-wf-${idx}`);
+            const siblingButtons = card.querySelectorAll('.option-button');
 
             userAnswersMap[idx] = selectedValue;
             answeredCount++;
-            gapLabel.innerText = " " + selectedValue + " ";
             explanationPanel.style.display = "block";
+
+            // Khóa tương tác tất cả nút trong card này
+            siblingButtons.forEach(btn => btn.classList.add('disabled'));
 
             const correctValue = questionsData[idx].correct;
             if (selectedValue === correctValue) {
-                gapLabel.style.background = "#00D26A";
-                gapLabel.style.color = "#FFFFFF";
-                gapLabel.style.borderColor = "#00A352";
+                btnElement.classList.add('correct');
                 correctAnswersCount++;
                 playSound('correct');
                 confetti({
@@ -736,19 +682,18 @@
                     colors: ['#8854C0', '#FDCB6E', '#00C9A7']
                 });
             } else {
-                gapLabel.style.background = "#FF4757";
-                gapLabel.style.color = "#FFFFFF";
-                gapLabel.style.borderColor = "#CC3240";
+                btnElement.classList.add('wrong');
                 card.classList.add('shake-animation');
                 playSound('wrong');
+                
+                // Tự động tìm hiển thị màu xanh lá làm nổi bật cho đáp án đúng gốc để học sinh đối chiếu
+                siblingButtons.forEach(btn => {
+                    if (btn.innerText === correctValue) {
+                        btn.classList.add('correct');
+                    }
+                });
+                
                 setTimeout(() => card.classList.remove('shake-animation'), 400);
-
-                const correctNotice = document.createElement('span');
-                correctNotice.style.color = "#00D26A";
-                correctNotice.style.fontWeight = "900";
-                correctNotice.style.marginLeft = "10px";
-                correctNotice.innerText = `(Đáp án đúng: ${correctValue})`;
-                gapLabel.parentNode.appendChild(correctNotice);
             }
         }
 
