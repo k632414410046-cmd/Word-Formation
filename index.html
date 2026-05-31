@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Formation Mastery - Ms Ngoc Hai FTU</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --purple: #8854C0;
+            --yellow: #FDCB6E;
+            --mint: #00C9A7;
+            --correct: #00D26A;
+            --wrong: #FF4757;
+            --dark: #2D3436;
+            --card-bg: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Quicksand', 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(-45deg, var(--purple), var(--mint), var(--yellow), #E84393);
+            background-size: 400% 400%;
+            animation: loangMauBG 12s ease infinite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        @keyframes loangMauBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.18;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><circle cx='20' cy='20' r='5' fill='%23FFF'/><path d='M50 15 L55 25 L45 25 Z' fill='%23FFF'/><text x='70' y='30' font-size='12'>🐱</text><text x='15' y='75' font-size='12'>🍓</text><text x='80' y='80' font-size='12'>⭐</text><path d='M35 45 Q 40 40, 45 45 T 55 45' fill='none' stroke='%23FFF' stroke-width='2'/></svg>");
+        }
+
+        .header-panel {
+            text-align: center;
+            margin: 25px 0 10px 0;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.25);
+            padding: 8px 30px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-panel h2 {
+            margin: 0;
+            font-size: 15px;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 900;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .main-container {
+            width: 92%;
+            max-width: 820px;
+            z-index: 2;
+        }
+
+        .section-title {
+            text-align: center;
+            color: #FFFFFF;
+            font-size: 25px;
+            font-weight: 900;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .quiz-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 12px 0 rgba(0,0,0,0.15);
+            border: 4px solid var(--dark);
+            position: relative;
+        }
+
+        .question-text {
+            font-size: 17px;
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 22px;
+            line-height: 1.6;
+        }
+
+        .gap-display {
+            display: inline-block;
+            background: #FFF9E6;
+            border: 3px dashed var(--purple);
+            padding: 6px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 800;
+            color: var(--purple);
+            min-width: 200px;
+            text-align: center;
+            margin: 5px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 0 var(--dark);
+        }
+
+        .gap-display:hover {
+            background: #F0EDF6;
+            transform: scale(1.03);
+        }
+
+        .dropdown-popup-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+
+        .dropdown-popup-box {
+            background: white;
+            border: 4px solid var(--dark);
+            border-radius: 24px;
+            padding: 25px;
+            max-width: 440px;
+            width: 90%;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .dropdown-popup-title {
+            font-size: 16px;
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 20px;
+        }
+
+        .dropdown-options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .popup-option-item {
+            background: #FFFFFF;
+            border: 3px solid var(--dark);
+            border-radius: 15px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 5px 0 var(--dark);
+            transition: all 0.1s;
+            text-align: left;
+        }
+
+        .popup-option-item:hover {
+            background: #FFF9E6;
+            transform: scale(1.02);
+            border-color: var(--purple);
+        }
+
+        .explanation-container {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #FFFDE7;
+            border: 3px solid var(--dark);
+            border-radius: 18px;
+            box-shadow: inset 0 4px 0 rgba(0,0,0,0.05);
+            display: none;
+            animation: expandSlow 0.3s ease-out forwards;
+        }
+
+        @keyframes expandSlow {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .exp-title {
+            font-weight: 900;
+            font-size: 15px;
+            color: #D35400;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .exp-step {
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .exp-step strong {
+            color: var(--purple);
+            font-weight: 700;
+        }
+
+        .shake-animation {
+            animation: shakeEffect 0.4s ease-in-out;
+        }
+
+        @keyframes shakeEffect {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .submit-bar {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .big-submit-btn {
+            background-color: #FF7675;
+            color: white;
+            border: 4px solid var(--dark);
+            border-radius: 50px;
+            padding: 18px 50px;
+            font-size: 22px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 10px 0 var(--dark);
+            position: relative;
+            top: 0;
+            transition: all 0.1s;
+        }
+
+        .big-submit-btn:hover {
+            transform: scale(1.05);
+            background-color: #ff5e5d;
+        }
+
+        .big-submit-btn:active {
+            top: 6px;
+            box-shadow: 0 4px 0 var(--dark);
+        }
+
+        .custom-popup-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 3000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .custom-popup-box {
+            background: #FFFFFF;
+            border: 4px solid var(--dark);
+            border-radius: 28px;
+            padding: 35px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 15px 0 rgba(0,0,0,0.2);
+            animation: popUpAnim 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .popup-score {
+            font-size: 50px;
+            font-weight: 900;
+            color: #8854C0;
+            margin: 15px 0;
+        }
+
+        .popup-comment {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .popup-close-btn {
+            background: var(--mint);
+            color: white;
+            border: 3px solid var(--dark);
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 900;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 var(--dark);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-panel">
+        <h2>Giáo viên tạo: Ms Ngoc Hai FTU</h2>
+    </div>
+
+    <div class="main-container">
+        <h1 class="section-title">🚀 WORD FORMATION MASTERY CHALLENGE 🎯</h1>
+        <div id="quiz-area-container"></div>
+
+        <div class="submit-bar">
+            <button class="big-submit-btn" onclick="submitExam()">NỘP BÀI THI 🎉</button>
+        </div>
+    </div>
+
+    <div class="dropdown-popup-overlay" id="dropdown-popup">
+        <div class="dropdown-popup-box">
+            <div class="dropdown-popup-title">Hãy chọn từ loại chính xác nhất:</div>
+            <div class="dropdown-options-list" id="dropdown-options-list"></div>
+        </div>
+    </div>
+
+    <div class="custom-popup-overlay" id="result-popup">
+        <div class="custom-popup-box">
+            <h2 style="margin-top:0; font-weight:900; color:var(--dark);">BÀI THI HOÀN THÀNH!</h2>
+            <div class="popup-score" id="popup-score-text">0/15</div>
+            <div class="popup-comment" id="popup-comment-text">Lời nhận xét động viên ở đây!</div>
+            <button class="popup-close-btn" onclick="closePopup()">XEM LẠI BÀI LÀM 📝</button>
+        </div>
+    </div>
+
+    <script>
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            try {
+                if (type === 'correct') {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain); gain.connect(audioContext.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                    osc.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                    osc.start(); osc.stop(audioContext.currentTime + 0.4);
+                } else {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain); gain.connect(audioContext.destination);
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, audioContext.currentTime);
+                    osc.frequency.setValueAtTime(120, audioContext.currentTime + 0.15);
+                    osc.frequency.setValueAtTime(90, audioContext.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                    osc.start(); osc.stop(audioContext.currentTime + 0.4);
+                }
+            } catch (e) { console.log("Audio failure"); }
+        }
+
+        const questionsData = [
+            {
+                id: 1,
+                textBefore: "The professor is one of the most ",
+                textAfter: " economists of our time, having written over twenty books on market trends. (INFLUENCE)",
+                pool: ["influential", "influencing", "influence", "influenced"],
+                correct: "influential",
+                explain: {
+                    trans: "Vị giáo sư này là một trong những nhà kinh tế học có sức ảnh hưởng lớn nhất trong thời đại của chúng ta, ông đã viết hơn hai mươi cuốn sách về xu hướng thị trường.",
+                    opts: [
+                        "A. influential (adj): có sức ảnh hưởng sâu rộng, có uy tín lớn.",
+                        "B. influencing (V-ing): hành động đang gây tác động.",
+                        "C. influence (v/n): sự ảnh hưởng / gây ảnh hưởng.",
+                        "D. influenced (V-ed): bị ảnh hưởng."
+                    ],
+                    why: "Vị trí cần điền đứng trước danh từ chỉ người 'economists' (nhà kinh tế học) và đứng sau trạng từ chỉ mức độ 'most' nên bắt buộc phải điền một tính từ bổ nghĩa: 'influential'.",
+                    wrong: "Danh từ và động từ ở các phương án B, C, D đều vi phạm quy tắc sắp xếp từ loại bổ ngữ trước danh từ chính."
+                }
+            },
+            {
+                id: 2,
+                textBefore: "The government is investing billions of dollars in the ",
+                textAfter: " of the country’s aging railway system. (MODERN)",
+                pool: ["modernisation", "modernise", "modern", "modernly"],
+                correct: "modernisation",
+                explain: {
+                    trans: "Chính phủ đang đầu tư hàng tỷ đô la vào việc hiện đại hóa hệ thống đường sắt đang xuống cấp của đất nước.",
+                    opts: [
+                        "A. modernisation (n): sự hiện đại hóa, quá trình đổi mới công nghệ.",
+                        "B. modernise (v): hiện đại hóa.",
+                        "C. modern (adj): hiện đại.",
+                        "D. modernly (adv): một cách hiện đại."
+                    ],
+                    why: "Vị trí đứng sau mạo từ cấu trúc 'the' và trước giới từ 'of' bắt buộc phải là một danh từ đóng vai trò trung tâm cụm từ, do đó chọn 'modernisation'.",
+                    wrong: "B là động từ, C là tính từ, D là trạng từ nên hoàn toàn sai quy tắc cấu trúc ngữ pháp sau mạo từ 'the'."
+                }
+            },
+            {
+                id: 3,
+                textBefore: "After the accident, he was left completely ",
+                textAfter: " of walking without assistance. (CAPABLE)",
+                pool: ["incapable", "capable", "capability", "capably"],
+                correct: "incapable",
+                explain: {
+                    trans: "Sau vụ tai nạn, anh ấy bị bỏ lại trong tình trạng hoàn toàn không có khả năng tự đi lại nếu không có sự trợ giúp.",
+                    opts: [
+                        "A. incapable (adj): không có khả năng, bất lực (đi với giới từ 'of').",
+                        "B. capable (adj): có năng lực, có khả năng.",
+                        "C. capability (n): năng lực.",
+                        "D. capably (adv): một cách có năng lực."
+                    ],
+                    why: "Đứng sau động từ nối trạng thái 'was left' và trạng từ 'completely' cần một tính từ. Cấu trúc đi kèm giới từ 'of' phía sau quy định cụm cố định: 'incapable of doing something' (không thể làm gì). Ngữ cảnh tai nạn gây hậu quả tiêu cực nên phải dùng tiền tố phủ định 'in-'.",
+                    wrong: "B trái ngược hoàn toàn ngữ nghĩa thực tế tai nạn; C và D sai từ loại ngữ pháp."
+                }
+            },
+            {
+                id: 4,
+                textBefore: "Once the contract is signed, the terms are ",
+                textAfter: " and cannot be negotiated under any circumstances. (ALTER)",
+                pool: ["unalterable", "alteration", "alterable", "altered"],
+                correct: "unalterable",
+                explain: {
+                    trans: "Một khi hợp đồng đã được ký kết, các điều khoản là bất di bất dịch và không thể thương lượng lại trong bất kỳ hoàn cảnh nào.",
+                    opts: [
+                        "A. unalterable (adj): không thể sửa đổi, không thể thay đổi, bất di bất dịch.",
+                        "B. alteration (n): sự sửa đổi, sự thay đổi nhỏ.",
+                        "C. alterable (adj): có thể thay đổi sửa đổi.",
+                        "D. altered (V-ed): đã bị thay đổi."
+                    ],
+                    why: "Đứng sau động từ nối 'are' cần tính từ. Căn cứ vào vế sau 'cannot be negotiated under any circumstances' (không thể thương lượng trong bất kỳ hoàn cảnh nào) chứng tỏ tính chất các điều khoản này là cố định, dùng tính từ phủ định 'unalterable'.",
+                    wrong: "C trái ngược nghĩa vế sau; B sai loại từ; D làm câu tối nghĩa lỗi phối hợp trạng thái."
+                }
+            },
+            {
+                id: 5,
+                textBefore: "Living in different countries during her childhood gave her a high degree of ",
+                textAfter: " to new environments. (ADAPT)",
+                pool: ["adaptability", "adapt", "adaptable", "adaptation"],
+                correct: "adaptability",
+                explain: {
+                    trans: "Việc sống ở nhiều quốc gia khác nhau trong suốt thời thơ ấu đã mang lại cho cô ấy một khả năng thích nghi cao đối với các môi trường mới.",
+                    opts: [
+                        "A. adaptability (n): khả năng thích nghi, năng lực thích ứng với hoàn cảnh.",
+                        "B. adapt (v): thích nghi.",
+                        "C. adaptable (adj): có thể thích nghi tốt.",
+                        "D. adaptation (n): sự thích nghi (thiên về quá trình biến đổi sinh học hoặc tác phẩm chuyển thể)."
+                    ],
+                    why: "Đứng sau cấu trúc cụm từ đo lường 'a high degree of' (mức độ cao của cái gì) bắt buộc phải điền một danh từ trừu tượng chỉ tố chất năng lực: 'adaptability'.",
+                    wrong: "B và C sai từ loại; D chỉ sự biến đổi hình thái sinh học chứ không chỉ tố chất, năng lực linh hoạt thích nghi hoàn cảnh sống của con người."
+                }
+            },
+            {
+                id: 6,
+                textBefore: "The company appointed a new deputy director to ensure the ",
+                textAfter: " of leadership during the transition period. (CONTINUE)",
+                pool: ["continuity", "continue", "continuous", "continually"],
+                correct: "continuity",
+                explain: {
+                    trans: "Công ty đã bổ nhiệm một phó giám đốc mới để đảm bảo tính liên tục của bộ máy lãnh đạo trong giai đoạn chuyển giao.",
+                    opts: [
+                        "A. continuity (n): tính liên tục, sự kế thừa liên miên không ngắt quãng.",
+                        "B. modernisation (n): sự hiện đại hóa, quá trình đổi mới công nghệ.",
+                        "C. continuous (adj): liên tục.",
+                        "D. continually (adv): một cách liên tục lặp đi lặp lại."
+                    ],
+                    why: "Đứng sau mạo từ 'the' và đứng trước cấu trúc giới từ 'of leadership' bắt buộc phải là một danh từ giữ vai trò cốt lõi cụm từ, do đó chọn 'continuity'.",
+                    wrong: "Các phương án B, C, D đều sai phạm quy tắc từ loại đứng sau mạo từ chỉ định 'the'."
+                }
+            },
+            {
+                id: 7,
+                textBefore: "Scientists believe that the development of this species was a long ",
+                textAfter: " process that took millions of years. (EVOLVE)",
+                pool: ["evolutionary", "evolution", "evolve", "evolving"],
+                correct: "evolutionary",
+                explain: {
+                    trans: "Các nhà khoa học tin rằng sự phát triển của loài này là một quá trình tiến hóa lâu dài mất hàng triệu năm.",
+                    opts: [
+                        "A. evolutionary (adj): thuộc về tiến hóa, mang tính chất tiến hóa dần dần.",
+                        "B. evolution (n): sự tiến hóa.",
+                        "C. evolve (v): tiến hóa.",
+                        "D. evolving (V-ing): đang tiến hóa."
+                    ],
+                    why: "Đứng trước danh từ chính 'process' (quá trình) và đứng sau tính từ 'long' cần một tính từ đồng dạng để tạo thành cấu trúc liệt kê tính chất: 'evolutionary process'.",
+                    wrong: "Danh từ evolution không đứng làm bổ ngữ bổ nghĩa trực tiếp cho danh từ process trong thuật ngữ khoa học ghép đôi này; C và D sai loại từ."
+                }
+            },
+            {
+                id: 8,
+                textBefore: "Running a marathon in such extreme weather conditions is a true test of physical ",
+                textAfter: ". (ENDURE)",
+                pool: ["endurance", "endure", "endurable", "enduring"],
+                correct: "endurance",
+                explain: {
+                    trans: "Chạy marathon trong điều kiện thời tiết khắc nghiệt như vậy là một bài kiểm tra thực sự đối với sức chịu đựng thể chất.",
+                    opts: [
+                        "A. endurance (n): sức chịu đựng, khả năng cam chịu bền bỉ.",
+                        "B. endure (v): chịu đựng.",
+                        "C. endurable (adj): có thể chịu đựng được.",
+                        "D. enduring (adj): lâu dài, trường tồn."
+                    ],
+                    why: "Đứng sau tính từ 'physical' (thuộc về thể chất) cần một danh từ để tạo thành cụm danh từ ghép hoàn chỉnh: 'physical endurance' (sức chịu đựng của thể chất).",
+                    wrong: "B, C, D đều sai từ loại ngữ pháp bắt buộc theo sau tính từ bổ nghĩa."
+                }
+            },
+            {
+                id: 9,
+                textBefore: "It took me nearly a week to ",
+                textAfter: " to the local time zone after flying from London to Tokyo. (ADJUST)",
+                pool: ["adjust", "adjustment", "adjustable", "adjusted"],
+                correct: "adjust",
+                explain: {
+                    trans: "Tôi đã mất gần một tuần để điều chỉnh thích nghi với múi giờ địa phương sau chuyến bay từ Luân Đôn đến Tokyo.",
+                    opts: [
+                        "A. adjust (v): điều chỉnh, thích nghi (đi với giới từ 'to').",
+                        "B. adjustment (n): sự điều chỉnh.",
+                        "C. adjustable (adj): có thể căn chỉnh được.",
+                        "D. adjusted (V-ed): đã được căn chỉnh."
+                    ],
+                    why: "Áp dụng cấu trúc chỉ thời gian tiêu tốn: 'It takes/took someone + thời gian + to-V (động từ nguyên mẫu)'. Do đó tại chỗ trống ta chọn động từ nguyên thể 'adjust'. Cụm 'adjust to something' nghĩa là thích nghi với cái gì.",
+                    wrong: "B, C, D đều sai quy tắc chia dạng động từ đứng sau cấu trúc chỉ mốc tiêu tốn thời gian 'to'."
+                }
+            },
+            {
+                id: 10,
+                textBefore: "This antique watch belongs to my grandmother and is completely ",
+                textAfter: " to our family. (PLACE)",
+                pool: ["irreplaceable", "replaceable", "replacement", "place"],
+                correct: "irreplaceable",
+                explain: {
+                    trans: "Chiếc đồng hồ cổ này thuộc về bà nội của tôi và nó hoàn toàn không thể thay thế được đối với gia đình chúng tôi.",
+                    opts: [
+                        "A. irreplaceable (adj): vô giá, không một thứ gì có thể thay thế nổi.",
+                        "B. replaceable (adj): có thể thay thế được.",
+                        "C. replacement (n): sự thay thế / vật thay thế.",
+                        "D. place (v/n): đặt để / địa điểm."
+                    ],
+                    why: "Đứng sau động từ nối hệ từ 'is' và trạng từ 'completely' cần một tính từ. Chiếc đồng hồ cổ là kỷ vật gia đình quý giá thừa kế từ bà nên giá trị tinh thần của nó là độc bản, áp dụng tính từ mang tiền tố phủ định 'irreplaceable'.",
+                    wrong: "B trái ngược hoàn toàn ý nghĩa trân trọng kỷ vật; C và D sai loại từ ngữ pháp."
+                }
+            },
+            {
+                id: 11,
+                textBefore: "Stop throwing tantrums like that! You are twenty years old, yet your behavior is incredibly ",
+                textAfter: ". (MATURE)",
+                pool: ["immature", "mature", "maturity", "maturely"],
+                correct: "immature",
+                explain: {
+                    trans: "Hãy thôi ngay việc hờn dỗi trẻ con như thế đi! Bạn đã hai mươi tuổi rồi, vậy mà hành vi của bạn lại cực kỳ trẻ con/chưa trưởng thành.",
+                    opts: [
+                        "A. immature (adj): non nớt, chưa trưởng thành, tính tình trẻ con hờn dỗi.",
+                        "B. mature (adj): trưởng thành, chín chắn.",
+                        "C. maturity (n): sự trưởng thành.",
+                        "D. maturely (adv): một cách chín chắn."
+                    ],
+                    why: "Đứng sau trạng từ chỉ mức độ cực đoan 'incredibly' cần một tính từ. Ngữ cảnh phê phán hành vi hờn dỗi vô cớ dù đã 20 tuổi chỉ ra tính cách này mang nghĩa tiêu cực trẻ con, chọn 'immature'.",
+                    wrong: "B mang nghĩa chín chắn tích cực, mâu thuẫn trực tiếp với câu lệnh phê bình ở đầu; C và D sai loại từ."
+                }
+            },
+            {
+                id: 12,
+                textBefore: "Because the keynote speaker missed his flight, the organizers had to ",
+                textAfter: " the entire afternoon schedule. (ARRANGE)",
+                pool: ["rearrange", "arrangement", "arrange", "arranging"],
+                correct: "rearrange",
+                explain: {
+                    trans: "Bởi vì diễn giả chính đã bị lỡ chuyến bay, ban tổ chức đã phải sắp xếp lại toàn bộ lịch trình làm việc của buổi chiều.",
+                    opts: [
+                        "A. rearrange (v): sắp xếp lại, bố trí lại lịch trình cấu trúc cũ sang lịch mới.",
+                        "B. arrangement (n): sự sắp xếp.",
+                        "C. arrange (v): sắp xếp, thu xếp.",
+                        "D. arranging (V-ing): đang sắp xếp."
+                    ],
+                    why: "Đứng sau trợ động từ khuyết thiếu bắt buộc 'had to' cần một động từ nguyên mẫu. Lý do sự cố diễn giả lỡ chuyến bay buộc ban tổ chức phải thay đổi kế hoạch cũ để lập ra lịch mới, hành động mang tiền tố lặp lại này là 'rearrange'.",
+                    wrong: "C chỉ mang nghĩa xếp lịch ban đầu chứ chưa làm bật lên phản ứng xử lý sự cố hủy lịch cũ làm lại lịch mới; B và D sai dạng thức từ loại."
+                }
+            },
+            {
+                id: 13,
+                textBefore: "It was only through his sheer ",
+                textAfter: " that he managed to finish the research despite having no funding. (PERSIST)",
+                pool: ["persistence", "persist", "persistent", "persistently"],
+                correct: "persistence",
+                explain: {
+                    trans: "Chích nhờ vào sự kiên trì bền bỉ đến cùng của mình mà anh ấy đã xoay sở hoàn thành nghiên cứu bất chấp việc không có tài trợ.",
+                    opts: [
+                        "A. persistence (n): sự kiên trì bền bỉ, tính dai dẳng quyết tâm.",
+                        "B. persist (v): kiên trì.",
+                        "C. persistent (adj): kiên trì, dai dẳng.",
+                        "D. persistently (adv): một cách kiên trì."
+                    ],
+                    why: "Đứng sau tính từ nhấn mạnh 'sheer' và tính từ sở hữu 'his' bắt buộc vị trí này phải điền một danh từ trừu tượng chỉ phẩm chất con người: 'persistence'.",
+                    wrong: "Các phương án B, C, D đều vi phạm quy tắc từ loại đứng sau tính từ sở hữu 'his'."
+                }
+            },
+            {
+                id: 14,
+                textBefore: "We bought a ",
+                textAfter: " sofa so that our guests would have a comfortable place to sleep when staying overnight. (CONVERT)",
+                pool: ["convertible", "convert", "conversion", "converted"],
+                correct: "convertible",
+                explain: {
+                    trans: "Chúng tôi đã mua một chiếc ghế sofa có thể chuyển đổi công năng để khách của chúng tôi có một nơi ngủ thoải mái khi ở lại qua đêm.",
+                    opts: [
+                        "A. convertible (adj): có thể biến đổi hình thái, có thể chuyển đổi công năng sử dụng.",
+                        "B. convert (v): chuyển đổi.",
+                        "C. conversion (n): sự chuyển đổi hình thức.",
+                        "D. converted (V-ed): đã được chuyển đổi."
+                    ],
+                    why: "Vị trí đứng trước danh từ 'sofa' và sau mạo từ 'a' cần một tính từ bổ nghĩa cho vật thể. Ghế sofa có thể biến đổi thành giường ngủ khi có khách qua đêm phù hợp với tính từ chỉ khả năng mang đuôi '-ible': 'convertible sofa'.",
+                    wrong: "B và C sai từ loại; D mang nghĩa vật đã bị cải tạo tĩnh, không chỉ đặc tính thiết kế cơ động của chiếc ghế đa năng này."
+                }
+            },
+            {
+                id: 15,
+                textBefore: "The rubbish had been left out in the sun for days, emitting a ",
+                textAfter: " smell that drove the neighbors away. (REVOLT)",
+                pool: ["revolting", "revolt", "revolution", "revolted"],
+                correct: "revolting",
+                explain: {
+                    trans: "Rác thải đã bị bỏ ngoài trời nắng suốt nhiều ngày, tỏa ra một mùi kinh tởm kinh dị khiến những người hàng xóm phải bỏ chạy đi nơi khác.",
+                    opts: [
+                        "A. revolting (adj): kinh tởm, ghê tởm, gây buồn nôn kinh dị.",
+                        "B. revolt (v/n): nổi loạn / cuộc nổi dậy.",
+                        "C. revolution (n): cuộc cách mạng.",
+                        "D. revolted (V-ed): bị làm cho kinh tởm."
+                    ],
+                    why: "Đứng trước danh từ chỉ sự vật 'smell' (mùi hôi) và đứng sau mạo từ 'a' cần một tính từ mang tính chủ động mô tả tính chất gây ra cảm xúc ghê tởm của sự vật: 'revolting'.",
+                    wrong: "B và C sai nghĩa hoàn toàn; D dùng cho cảm xúc của con người bị tác động (bị ghê tởm) chứ không dùng mô tả đặc tính bản chất của mùi hôi rác thải."
+                }
+            }
+        ];
+
+        function shuffleOptionsArray(array) {
+            let current = [...array];
+            for (let i = current.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [current[i], current[j]] = [current[j], current[i]];
+            }
+            return current;
+        }
+
+        let answeredCount = 0;
+        let correctAnswersCount = 0;
+        let userAnswersMap = {};
+
+        function renderWordFormationQuiz() {
+            const container = document.getElementById('quiz-area-container');
+            container.innerHTML = "";
+
+            questionsData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'quiz-card';
+                card.id = `wf-card-${index}`;
+
+                card.innerHTML = `
+                    <div class="question-text">
+                        Câu hỏi ${item.id}: ${item.textBefore}
+                        <span class="gap-display" id="gap-wf-${index}" onclick="openWordFormationDropdown(${index})">........... Click để chọn từ ...........</span>
+                        ${item.textAfter}
+                    </div>
+                    <div class="explanation-container" id="exp-wf-${index}">
+                        <div class="exp-title">💡 PHÂN TÍCH CHUYÊN SÂU TỪ MS NGOC HAI FTU:</div>
+                        <div class="exp-step"><strong>Bước 1 (Dịch nghĩa toàn câu):</strong> ${item.explain.trans}</div>
+                        <div class="exp-step"><strong>Bước 2 (Giải nghĩa các từ loại phái sinh):</strong><br>${item.explain.opts.join('<br>')}</div>
+                        <div class="exp-step"><strong>Bước 3 (Vì sao chọn từ loại này?):</strong> ${item.explain.why}</div>
+                        <div class="exp-step"><strong>Bước 4 (Vì sao các từ loại khác SAI?):</strong> ${item.explain.wrong}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        window.openWordFormationDropdown = function(idx) {
+            if (userAnswersMap[idx] !== undefined) return;
+            
+            const popup = document.getElementById('dropdown-popup');
+            const optionsListContainer = document.getElementById('dropdown-options-list');
+            optionsListContainer.innerHTML = "";
+
+            let shuffledPool = shuffleOptionsArray(questionsData[idx].pool);
+
+            shuffledPool.forEach(optionText => {
+                const optItem = document.createElement('div');
+                optItem.className = "popup-option-item";
+                optItem.text = optionText;
+                optItem.innerText = optionText;
+                optItem.onclick = function() {
+                    submitSelectedWord(idx, optionText);
+                };
+                optionsListContainer.appendChild(optItem);
+            });
+
+            popup.style.display = "flex";
+        };
+
+        function submitSelectedWord(idx, selectedValue) {
+            document.getElementById('dropdown-popup').style.display = "none";
+            
+            const gapLabel = document.getElementById(`gap-wf-${idx}`);
+            const card = document.getElementById(`wf-card-${idx}`);
+            const explanationPanel = document.getElementById(`exp-wf-${idx}`);
+
+            userAnswersMap[idx] = selectedValue;
+            answeredCount++;
+            gapLabel.innerText = " " + selectedValue + " ";
+            explanationPanel.style.display = "block";
+
+            const correctValue = questionsData[idx].correct;
+            if (selectedValue === correctValue) {
+                gapLabel.style.background = "#00D26A";
+                gapLabel.style.color = "#FFFFFF";
+                gapLabel.style.borderColor = "#00A352";
+                correctAnswersCount++;
+                playSound('correct');
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.75 },
+                    colors: ['#8854C0', '#FDCB6E', '#00C9A7']
+                });
+            } else {
+                gapLabel.style.background = "#FF4757";
+                gapLabel.style.color = "#FFFFFF";
+                gapLabel.style.borderColor = "#CC3240";
+                card.classList.add('shake-animation');
+                playSound('wrong');
+                setTimeout(() => card.classList.remove('shake-animation'), 400);
+
+                const correctNotice = document.createElement('span');
+                correctNotice.style.color = "#00D26A";
+                correctNotice.style.fontWeight = "900";
+                correctNotice.style.marginLeft = "10px";
+                correctNotice.innerText = `(Đáp án đúng: ${correctValue})`;
+                gapLabel.parentNode.appendChild(correctNotice);
+            }
+        }
+
+        window.submitExam = function() {
+            if (answeredCount < questionsData.length) {
+                if (!confirm("Các em chưa điền hết tất cả các câu từ loại đâu nè. Có chắc chắn muốn nộp bài tổng kết ngay không?")) return;
+            }
+
+            const modal = document.getElementById('result-popup');
+            document.getElementById('popup-score-text').innerText = `${correctAnswersCount}/${questionsData.length}`;
+            const comment = document.getElementById('popup-comment-text');
+
+            if (correctAnswersCount === questionsData.length) {
+                comment.innerText = "Quá xuất sắc! Em xứng đáng đạt điểm 10 tuyệt đối chuyên sâu về Word Formation của cô Ngọc Hải FTU! 👑🥇✨";
+            } else if (correctAnswersCount >= 11) {
+                comment.innerText = "Làm bài rất giỏi! Khả năng nhận diện hậu tố và tiền tố từ loại của em cực kỳ vững chắc! 🌟🎉";
+            } else if (correctAnswersCount >= 7) {
+                comment.innerText = "Khá tốt! Em hãy rà soát thật kỹ lại nội dung giải thích chi tiết 4 bước cô viết ở các câu làm sai nhé! 💪📚";
+            } else {
+                comment.innerText = "Đừng nản lòng em nhé! Cấu trúc biến đổi từ loại nâng cao cần tích lũy. Thử sức lại lần nữa nha! Cô luôn tin em! 💖⭐";
+            }
+
+            modal.style.display = "flex";
+        }
+
+        window.closePopup = function() {
+            document.getElementById('result-popup').style.display = "none";
+        }
+
+        renderWordFormationQuiz();
+    </script>
+</body>
+</html>
